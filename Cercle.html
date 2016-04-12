@@ -9,19 +9,31 @@
 <body>
 <script>
 
-var circleFifthRadius = 50;
-var circleFifthXOffset = 100;
-var circleFifthYOffset = 100;
+var r = 50; // radius of the circle of fifth
+var cx = 100; // center of the circle
+var cy = 100;
 
+// Snap declaration
 var s = Snap();
-var circleFifth = s.circle(circleFifthXOffset , circleFifthYOffset , circleFifthRadius );
 
+// This circle will be our main circle of fifth
+var circleFifth = s.circle(cx , cy , r);
+circleFifth.attr({
+  fill: "white",
+  stroke: "red"
+});
 
-var dot = s.circle(50, 100, 20);
+var dots =  s.g();
+var thirtyDegreeAngle = 2 * Math.PI / 12;
+for( a = 0 ; a < 2 * Math.PI ; a = a + thirtyDegreeAngle){
+
+    console.log(cx + (r * Math.cos(a)));
+    dots.add( s.circle(cx + (r * Math.cos(a)), cy + (r * Math.sin(a)), 5));
+
+}
+
 
 
 </script>
-
-
 </body>
 </html>
