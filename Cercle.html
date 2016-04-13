@@ -9,30 +9,72 @@
 <body>
 <script>
 
-var r = 50; // radius of the circle of fifth
+// Snap declaration
+var s = Snap(800, 800);
+var r = 80; // radius of the circle of fifth
 var cx = 100; // center of the circle
 var cy = 100;
+var dotx, doty;
+var dot;
+var dots = [];
+var chord;
 
-// Snap declaration
-var s = Snap();
+// What is happening when you click on a dot
+var dotClickCallback = function(event) {
+    if(this.selected == false){
+      this.attr({ fill: 'blue' });
+      this.selected = true;
+      console.log(this.selected);
+
+    }else{
+      this.attr({ fill: 'black' });
+            this.selected = false;
+    };
+};
+
+
+// This function will draw the shape between all selected dots.
+var drawChord = function(event) {
+
+  var path = "";
+  for(i in dots){
+      if(dots[i].selected == true){
+        if(path == "") path = path + " M "
+        else  path = path + " L "
+        path = path +  dots[i].node.cx.baseVal.value + " " + dots[i].node.cy.baseVal.value;
+      }
+  }
+  // remove precendent shape if necessary
+  if( chord !== undefined) chord.remove();
+
+  chord = s.path(path);
+}
 
 // This circle will be our main circle of fifth
 var circleFifth = s.circle(cx , cy , r);
 circleFifth.attr({
   fill: "white",
-  stroke: "red"
+  stroke: "blue",
+  strokeWidth: 4
 });
 
-var dots =  s.g();
+
 var thirtyDegreeAngle = 2 * Math.PI / 12;
 for( a = 0 ; a < 2 * Math.PI ; a = a + thirtyDegreeAngle){
 
-    console.log(cx + (r * Math.cos(a)));
-    dots.add( s.circle(cx + (r * Math.cos(a)), cy + (r * Math.sin(a)), 5));
+    // Construction of the circle
+    dotx = Math.round(cx + (r * Math.cos(a)));
+    doty = Math.round(cy + (r * Math.sin(a)));
+    dot = s.circle(dotx, doty , 10);
 
+    // Adding Click Handler
+    dot.click(dotClickCallback);
+    dot.selected = false;
+    dots.push(dot);
 }
 
-
+var button = s.rect(200, 200, 50, 50);
+button.click(drawChord);
 
 </script>
 </body>
