@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Cercle des Quintes</title>
+<title>Circle Of Fifth</title>
 <script src="Snap.svg-0.4.1/dist/snap.svg-min.js"></script>
 </head>
 <body>
@@ -22,13 +22,11 @@ var chord;
 // What is happening when you click on a dot
 var dotClickCallback = function(event) {
     if(this.selected == false){
-      this.attr({ fill: 'blue' });
-      this.selected = true;
+      this.select();
       console.log(this.selected);
 
     }else{
-      this.attr({ fill: 'black' });
-            this.selected = false;
+      this.deselect();
     };
 };
 
@@ -42,12 +40,24 @@ var drawChord = function(event) {
         if(path == "") path = path + " M "
         else  path = path + " L "
         path = path +  dots[i].node.cx.baseVal.value + " " + dots[i].node.cy.baseVal.value;
+              console.log(dots[i].number);
       }
+
   }
   // remove precendent shape if necessary
   if( chord !== undefined) chord.remove();
 
   chord = s.path(path);
+}
+
+// Deselects all selected dots and removes the shape
+var resetChord = function(event) {
+  var path = "";
+  for(i in dots){
+      dots[i].deselect();
+  }
+  // remove precendent shape if necessary
+  if( chord !== undefined) chord.remove();
 }
 
 // This circle will be our main circle of fifth
@@ -58,23 +68,47 @@ circleFifth.attr({
   strokeWidth: 4
 });
 
+// This function will help us change from going around a circle of fifth to half steps
+function fifthToHalfStep( note ){
 
-var thirtyDegreeAngle = 2 * Math.PI / 12;
-for( a = 0 ; a < 2 * Math.PI ; a = a + thirtyDegreeAngle){
 
+}
+
+a= 2 * Math.PI / 12 * 4;
+var halfToneAngle = 2 * Math.PI / 12 * 5; // 2pi is a full angle, divided by 12, times 5 in order to have a half tone
+for( i = 0 ; i < 12 ; i++){
+
+
+    a = a + halfToneAngle;
     // Construction of the circle
     dotx = Math.round(cx + (r * Math.cos(a)));
     doty = Math.round(cy + (r * Math.sin(a)));
     dot = s.circle(dotx, doty , 10);
 
+
+    // Adding Select and deselect functions
+    dot.deselect = function(){
+      this.selected = false;
+      this.attr({ fill: 'black' });
+    }
+
+    dot.select = function(){
+      this.selected = true;
+      this.attr({ fill: 'blue' });
+    }
+
     // Adding Click Handler
     dot.click(dotClickCallback);
     dot.selected = false;
+    dot.number = i;
     dots.push(dot);
 }
 
-var button = s.rect(200, 200, 50, 50);
-button.click(drawChord);
+var buttonDraw = s.rect(200, 200, 50, 50);
+buttonDraw.click(drawChord);
+
+var buttonReset = s.rect(200, 260, 50, 50);
+buttonReset.click(resetChord);
 
 </script>
 </body>
