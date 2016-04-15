@@ -10,7 +10,7 @@
 <script>
 
 // Snap declaration
-var s = Snap(800, 800);
+var s = Snap(800, 400);
 var r = 80; // radius of the circle of fifth
 var cx = 100; // center of the circle
 var cy = 100;
@@ -74,17 +74,17 @@ function fifthToHalfStep( note ){
 
 }
 
-a= 2 * Math.PI / 12 * 4;
-var halfToneAngle = 2 * Math.PI / 12 * 5; // 2pi is a full angle, divided by 12, times 5 in order to have a half tone
+a= 3 * Math.PI  / 2 ;
+var halfToneAngle = 2 * Math.PI / 12 * 7; // 2pi is a full angle, divided by 12, times 7 in order to have a half tone
 for( i = 0 ; i < 12 ; i++){
 
 
-    a = a + halfToneAngle;
+
     // Construction of the circle
     dotx = Math.round(cx + (r * Math.cos(a)));
     doty = Math.round(cy + (r * Math.sin(a)));
     dot = s.circle(dotx, doty , 10);
-
+    a = a + halfToneAngle;
 
     // Adding Select and deselect functions
     dot.deselect = function(){
@@ -110,6 +110,23 @@ buttonDraw.click(drawChord);
 var buttonReset = s.rect(200, 260, 50, 50);
 buttonReset.click(resetChord);
 
+
+function changeThird(third){
+  if(third.value == "minor"){
+    dots[3].select();
+
+  }else{
+    dots[4].select();
+  }
+}
+
 </script>
+<select name="third" onchange="changeThird(this)">
+  <option value="minor">Minor Third</option>
+  <option value="major" selected>Major Third</option>
+</select>
+
+<button onclick="resetChord()">Click me</button>
+
 </body>
 </html>
