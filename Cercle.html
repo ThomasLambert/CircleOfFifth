@@ -16,7 +16,7 @@ var cx = 100; // center of the circle
 var cy = 100;
 var dotx, doty;
 var dot;
-var dots = [];
+var note = [];
 var chord;
 
 // What is happening when you click on a dot
@@ -26,35 +26,40 @@ var dotClickCallback = function(event) {
       console.log(this.selected);
 
     }else{
-      this.deselect();
+      this.unselect();
     };
 };
 
 
-// This function will draw the shape between all selected dots.
+// This function will draw the shape between all selected note.
 var drawChord = function(event) {
 
   var path = "";
-  for(i in dots){
-      if(dots[i].selected == true){
+  i=0;
+  var circleComplete = false;
+  while (!circleComplete) {
+      if(note[i].selected == true){
         if(path == "") path = path + " M "
         else  path = path + " L "
-        path = path +  dots[i].node.cx.baseVal.value + " " + dots[i].node.cy.baseVal.value;
-              console.log(dots[i].number);
+        path = path +  note[i].node.cx.baseVal.value + " " + note[i].node.cy.baseVal.value;
+            //  console.log(note[i].number);
       }
 
+    i = (i + 7) % 12;
+    if( i == 0 ) circleComplete = true;
   }
+
   // remove precendent shape if necessary
   if( chord !== undefined) chord.remove();
 
   chord = s.path(path);
 }
 
-// Deselects all selected dots and removes the shape
+// unselects all selected note and removes the shape
 var resetChord = function(event) {
   var path = "";
-  for(i in dots){
-      dots[i].deselect();
+  for(i in note){
+      note[i].unselect();
   }
   // remove precendent shape if necessary
   if( chord !== undefined) chord.remove();
@@ -86,8 +91,8 @@ for( i = 0 ; i < 12 ; i++){
     dot = s.circle(dotx, doty , 10);
     a = a + halfToneAngle;
 
-    // Adding Select and deselect functions
-    dot.deselect = function(){
+    // Adding Select and unselect functions
+    dot.unselect = function(){
       this.selected = false;
       this.attr({ fill: 'black' });
     }
@@ -101,7 +106,7 @@ for( i = 0 ; i < 12 ; i++){
     dot.click(dotClickCallback);
     dot.selected = false;
     dot.number = i;
-    dots.push(dot);
+    note.push(dot);
 }
 
 var buttonDraw = s.rect(200, 200, 50, 50);
@@ -112,12 +117,29 @@ buttonReset.click(resetChord);
 
 
 function changeThird(third){
+
   if(third.value == "minor"){
-    dots[3].select();
+    note[4].unselect();
+    note[3].select();
 
   }else{
-    dots[4].select();
+    note[3].unselect();
+    note[4].select();
   }
+  drawChord();
+}
+
+function changeSeventh(seventh){
+
+  if(seventh.value == "minor"){
+    note[11].unselect();
+    note[10].select();
+
+  }else{
+    note[10].unselect();
+    note[11].select();
+  }
+  drawChord();
 }
 
 </script>
@@ -126,7 +148,12 @@ function changeThird(third){
   <option value="major" selected>Major Third</option>
 </select>
 
-<button onclick="resetChord()">Click me</button>
+<select name="seventh" onchange="changeSeventh(this)">
+  <option value="minor" selected>Minor Seventh</option>
+  <option value="major">Major Seventh</option>
+</select>
+
+<button onclick="drawChord()">Click me</button>
 
 </body>
 </html>
